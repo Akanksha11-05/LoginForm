@@ -376,6 +376,30 @@ button:active::after {
     padding: 40px 20px;
   }
 }
+
+@media(max-width:900px){
+
+  .container.active .left {
+    transform: translateX(0);   /* reset */
+  }
+
+  .container.active .right {
+    transform: translateX(0);   /* reset */
+  }
+
+  .form {
+    display: none;
+  }
+
+  .form.active {
+    display: block;
+  }
+}
+
+
+
+
+  
 </style>
 </head>
 
