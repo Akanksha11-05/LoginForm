@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login-Registration Form</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: sans-serif;
+}
+
+body {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, rgb(2,2,45), #1e3c72, #2a5298, cyan);
+  overflow: hidden;
+  color: white;
+  transition: background 1s ease, color 1s ease;
+}
+
+.bg-animation span {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(135deg, rgb(1,1,20), rgb(33,69,33));
+  box-shadow: 0 0 5px #dcb4bb, 0 0 5px #ecc1c8;
+  animation: float 20s linear infinite;
+  bottom: -150px;
+}
+
+.bg-animation span:nth-child(1){ left: 10%; }
+.bg-animation span:nth-child(2){ left: 30%; animation-delay: 5s; }
+.bg-animation span:nth-child(3){ left: 50%; animation-delay: 2s; }
+.bg-animation span:nth-child(4){ left: 70%; animation-delay: 7s; }
+.bg-animation span:nth-child(5){ left: 90%; animation-delay: 3s; }
+
+@keyframes float {
+  0% { transform: translateY(0) rotate(0); opacity: 1; }
+  100% { transform: translateY(-800px) rotate(360deg); opacity: 0; }
+}
+
+.heading {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.heading h1 {
+  font-size: 50px;
+  opacity: 0;
+  transform: translateY(50px);
+  animation: fadeUp 1.5s ease forwards, gradientMove 10s linear infinite;
+  background: linear-gradient(90deg, #8b8be4, #b929b9, #ce3750);
+  background-size: 300%;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes gradientMove {
+  0% { background-position: 0%; }
+  100% { background-position: 300%; }
+}
+
+.container {
+  width: 800px;
+  height: 520px;
+  display: flex;
+  overflow: hidden;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  box-shadow: 10px 10px 30px rgba(0,0,0,0.3);
+  transition: 0.5s;
+}
+
+.left {
+  width: 50%;
+  padding: 20px;
+  color: white;
+  display: flex;
+  text-align: center;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg,#667eea,#764ba2);
+  transition:0.5s;
+}
+
+.left button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  border: none;
+  background: white;
+  color: #333;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.right {
+  width: 50%;
+  padding: 40px;
+  background: white;
+  color: black;
+}
+
+.form {
+  display: none;
+  animation: fade 0.5s ease;
+}
+
+.form.active {
+  display: block;
+}
+
+@keyframes fade {
+  from { opacity:0; transform:translateY(10px); }
+  to { opacity:1; transform:translateY(0); }
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  outline: none;
+  transition: 0.3s;
+}
+
+input:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 10px rgba(102,126,234,0.5);
+  transform: scale(1.02);
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  color: white;
+  background: #667eea;
+  border-radius: 8px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: 0.3s;
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+button::after {
+  content:"";
+  position: absolute;
+  width: 0;
+  height: 0;
+  background: rgba(255,255,255,0.4);
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  transition: 0.5s;
+}
+
+button:active::after {
+  width: 200px;
+  height: 200px;
+  opacity: 0;
+}
+
+.error {
+  color: red;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.success {
+  color: green;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.password-box {
+  position: relative;
+}
+
+.password-box span {
+  position: absolute;
+  right: 10px;
+  top: 12px;
+  cursor: pointer;
+}
+
+.tick {
+  display: none;
+  width: 70px;
+  height: 70px;
+  font-size: 35px;
+  border-radius: 50%;
+  background: green;
+  color: white;
+  justify-content: center;
+  align-items: center;
+  margin: 20px auto;
+  animation: pop 0.5s ease;
+}
+
+@keyframes pop {
+  0% { transform: scale(0); }
+  100% { transform: scale(1); }
+}
+
+.container.active .left {
+  transform: translateX(100%);
+}
+
+.container.active .right {
+  transform: translateX(-100%);
+}
+
+.mode-buttons {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  gap: 10px;
+  z-index: 999;
+}
+
+.mode-buttons button {
+  width: auto;
+  padding: 8px 12px;
+  font-size: 18px;
+  border-radius: 10px;
+  background: rgba(0,0,0,0.5);
+}
+
+
+.dashboard {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 500px;
+  padding: 50px 30px;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+  z-index: 1000;
+  color: #333;
+  animation: dashboardSlide 0.5s ease;
+}
+
+@keyframes dashboardSlide {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -60%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.dashboard h2 {
+  font-size: 28px;
+  color: #667eea;
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+
+.dashboard p {
+  font-size: 18px;
+  color: #555;
+  margin-bottom: 30px;
+}
+
+
+
+.dashboard-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+
+
+.logout-btn {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  color: white;
+  padding: 12px 40px;
+  font-size: 16px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  box-shadow: 0 5px 15px rgba(231,76,60,0.4);
+  transition: all 0.3s;
+  width: auto;
+}
+
+.logout-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(231,76,60,0.6);
+}
+
+
+
+.back-btn {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  padding: 12px 40px;
+  font-size: 16px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  box-shadow: 0 5px 15px rgba(102,126,234,0.4);
+  transition: all 0.3s;
+  width: auto;
+}
+
+.back-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102,126,234,0.6);
+}
+
+@media(max-width:500px){
+  .dashboard-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  .back-btn, .logout-btn {
+    width: 100%;
+    max-width: 250px;
+  }
+}
+
+
+
+.hidden {
+  display: none !important;
+}
+
+@media(max-width:900px){
+  .container {
+    width: 90%;
+    height: auto;
+    flex-direction: column;
+  }
+  .left, .right {
+    width: 100%;
+  }
+}
+
+@media(max-width:500px){
+  .heading h1 {
+    font-size: 30px;
+  }
+  .dashboard {
+    width: 95%;
+    padding: 40px 20px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="bg-animation">
+  <span></span><span></span><span></span><span></span><span></span>
+</div>
+
+<div class="mode-buttons">
+  <button onclick="setMode('normal')">🔄</button>
+  <button onclick="setMode('dark')">🌑</button>
+  <button onclick="setMode('light')">☀️</button>
+</div>
+
+
+<div class="heading" id="heading">
+  <h1>Login Registration Form</h1>
+</div>
+
+<div class="container" id="container">
+
+  <div class="left">
+    <h1 id="panelTitle">Welcome Back!</h1>
+    <p id="panelText">Already have an account?</p>
+    <button onclick="toggle()">Login</button>
+  </div>
+
+  <div class="right">
+
+    <div class="form active" id="loginForm">
+      <h2>Login</h2>
+      <input type="email" id="loginEmail" placeholder="Email">
+
+      <div class="password-box">
+        <input type="password" id="loginPassword" placeholder="Password">
+        <span onclick="togglePass('loginPassword')">👁️</span>
+      </div>
+
+      <p onclick="showForgot()" style="cursor:pointer;color:#667eea;font-size:13px;">Forgot Password?</p>
+
+      <div id="loginError"></div>
+      <button onclick="login()">Login</button>
+      <div class="tick" id="loginTick">✔</div>
+    </div>
+
+    <div class="form" id="registerForm">
+      <h2>Register</h2>
+      <input type="text" id="name" placeholder="Full Name">
+      <input type="email" id="email" placeholder="Email">
+
+      <div class="password-box">
+        <input type="password" id="password" placeholder="Password">
+        <span onclick="togglePass('password')">👁️</span>
+      </div>
+
+      <input type="password" id="confirmPassword" placeholder="Confirm Password">
+      <div id="registerError"></div>
+      <button onclick="register()">Register</button>
+    </div>
+
+    <div class="form" id="forgotForm">
+      <h2>Forgot Password</h2>
+      <input type="text" id="forgotName" placeholder="Enter Full Name">
+      <input type="email" id="forgotEmail" placeholder="Enter Email">
+      <div id="forgotMsg"></div>
+      <button onclick="getPassword()">Get Password</button>
+      <p onclick="resetToDefault()" style="cursor:pointer;color:#667eea;">← Back</p>
+    </div>
+
+  </div>
+</div>
+
+
+
+<div class="dashboard hidden" id="dashboard">
+  <h2>Welcome <span id="clientName"></span>!</h2>
+  <p>You are logged in successfully</p>
+    <button class="back-btn" onclick="goBack()">← Back</button>
+  <button class="logout-btn" onclick="logout()">Logout</button>
+</div>
+
+<script>
+let isLogin = true;
+let currentUser = null;
+
+function toggle(){
+  document.getElementById("container").classList.toggle("active");
+  isLogin = !isLogin;
+  document.getElementById("loginForm").classList.toggle("active");
+  document.getElementById("registerForm").classList.toggle("active");
+  document.getElementById("forgotForm").classList.remove("active");
+  document.getElementById("panelTitle").innerText = isLogin ? "Welcome Back!" : "Hello, Friend!";
+  document.getElementById("panelText").innerText = isLogin ? "Already have an account?" : "Create a new account";
+}
+
+function togglePass(id){
+  let input = document.getElementById(id);
+  input.type = input.type === "password" ? "text" : "password";
+}
+
+function validateEmail(email){
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+
+function register(){
+  let name = document.getElementById("name").value.trim();
+  let email = document.getElementById("email").value.trim();
+  let pass = document.getElementById("password").value;
+  let confirm = document.getElementById("confirmPassword").value;
+  let msg = document.getElementById("registerError");
+
+  msg.innerText = "";
+  msg.className = "";
+
+  if(!name || !email || !pass || !confirm){
+    msg.className="error"; msg.innerText="Fill all fields"; return;
+  }
+  if(!validateEmail(email)){
+    msg.className="error"; msg.innerText="Invalid email"; return;
+  }
+  if(pass.length<6){
+    msg.className="error"; msg.innerText="Password must be 6+ chars"; return;
+  }
+  if(pass!==confirm){
+    msg.className="error"; msg.innerText="Passwords do not match"; return;
+  }
+  if(localStorage.getItem(email)){
+    msg.className="error"; msg.innerText="User already exists"; return;
+  }
+
+  let userData = {name: name, password: btoa(pass)};
+  localStorage.setItem(email, JSON.stringify(userData));
+
+  msg.className="success";
+  msg.innerText="Register Successful";
+
+  document.getElementById("name").value="";
+  document.getElementById("email").value="";
+  document.getElementById("password").value="";
+  document.getElementById("confirmPassword").value="";
+}
+
+function login(){
+  let email = document.getElementById("loginEmail").value.trim();
+  let pass = document.getElementById("loginPassword").value;
+  let msg = document.getElementById("loginError");
+  let tick = document.getElementById("loginTick");
+
+  msg.innerText="";
+  msg.className="";
+
+  let stored = localStorage.getItem(email);
+
+  if(stored){
+    stored = JSON.parse(stored);
+    if(atob(stored.password) === pass){
+      msg.className="success";
+      msg.innerText="Login Successful";
+      tick.style.display="flex";
+      
+    
+
+      
+      currentUser = {email: email, name: stored.name};
+      setTimeout(()=>{
+        tick.style.display="none";
+        msg.innerText="";
+        showDashboard();
+      },2000);
+    } else {
+      msg.className="error";
+      msg.innerText="Wrong Password";
+    }
+  } else {
+    msg.className="error";
+    msg.innerText="Email not found";
+  }
+}
+
+
+function showDashboard(){
+  document.getElementById("container").classList.add("hidden");
+  document.getElementById("heading").classList.add("hidden");
+  document.getElementById("dashboard").classList.remove("hidden");
+  document.getElementById("clientName").innerText = currentUser.name;
+}
+
+function logout(){
+  alert("You are successfully logged out");
+  currentUser = null;
+  document.getElementById("dashboard").classList.add("hidden");
+  document.getElementById("container").classList.remove("hidden");
+  document.getElementById("heading").classList.remove("hidden");
+  
+  document.getElementById("loginEmail").value = "";
+  document.getElementById("loginPassword").value = "";
+}
+
+
+
+function goBack(){
+  document.getElementById("dashboard").classList.add("hidden");
+  document.getElementById("container").classList.remove("hidden");
+  document.getElementById("heading").classList.remove("hidden");
+  
+  document.getElementById("loginEmail").value = "";
+  document.getElementById("loginPassword").value = "";
+}
+
+
+
+function showForgot(){
+  document.getElementById("loginForm").classList.remove("active");
+  document.getElementById("registerForm").classList.remove("active");
+  document.getElementById("forgotForm").classList.add("active");
+}
+
+function resetToDefault(){
+  document.getElementById("forgotForm").classList.remove("active");
+  document.getElementById("loginForm").classList.add("active");
+  document.getElementById("container").classList.remove("active");
+  isLogin = true;
+}
+
+function getPassword(){
+  let name = document.getElementById("forgotName").value.trim();
+  let email = document.getElementById("forgotEmail").value.trim();
+  let msg = document.getElementById("forgotMsg");
+
+  msg.innerText="";
+  msg.className="";
+
+  if(!name || !email){
+    msg.className="error";
+    msg.innerText="Fill both fields";
+    return;
+  }
+
+  let data = localStorage.getItem(email);
+
+  if(!data){
+    msg.className="error";
+    msg.innerText="Email not found";
+    return;
+  }
+
+  let user = JSON.parse(data);
+
+  if(user.name.toLowerCase() === name.toLowerCase()){
+    msg.className="success";
+    msg.innerHTML = "Password: " + atob(user.password);
+  } else {
+    msg.className="error";
+    msg.innerText="Name does not match";
+  }
+}
+
+document.addEventListener("keypress", function(e){
+  if(e.key==="Enter"){
+    isLogin ? login() : register();
+  }
+});
+
+function setMode(mode){
+  if(mode==="dark"){
+    document.body.style.background="radial-gradient(circle, #001f2f, #000814)";
+    document.body.style.color="white";
+  } else if(mode==="light"){
+    document.body.style.background="linear-gradient(135deg,#f1f1f1,#fff,#e4e4e4)";
+    document.body.style.color="#111";
+  } else {
+    document.body.style.background="linear-gradient(135deg,rgb(2,2,45),#1e3c72,#2a5298,cyan)";
+    document.body.style.color="white";
+  }
+}
+</script>
+
+</body>
+</html>
